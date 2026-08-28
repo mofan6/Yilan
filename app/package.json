@@ -1,0 +1,113 @@
+{
+  "name": "yilan-offline-translator",
+  "version": "1.6.0",
+  "description": "译澜：支持逐词查义、兼容独显、集显和 CPU 的离线中英句子翻译器",
+  "main": "main.js",
+  "author": "MOFAN",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dist": "electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "43.1.1",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "studio.mofan.yilan",
+    "productName": "译澜",
+    "executableName": "Yilan",
+    "asar": true,
+    "compression": "maximum",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "electronLanguages": ["zh-CN", "en-US"],
+    "extraResources": [
+      {
+        "from": "../base-unpacked/resources/models",
+        "to": "models",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "../base-unpacked/resources/data",
+        "to": "data",
+        "filter": ["dictionary.sqlite3"]
+      },
+      {
+        "from": "../base-unpacked/resources/icons",
+        "to": "icons",
+        "filter": ["*.ico"]
+      },
+      {
+        "from": "third_party",
+        "to": "licenses",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "../runtime-vulkan",
+        "to": "runtime/vulkan",
+        "filter": [
+          "llama-server.exe",
+          "llama-server-impl.dll",
+          "llama-common.dll",
+          "llama.dll",
+          "mtmd.dll",
+          "ggml.dll",
+          "ggml-base.dll",
+          "ggml-rpc.dll",
+          "ggml-cpu-*.dll",
+          "ggml-vulkan.dll",
+          "libomp.dll",
+          "LICENSE-LLVM-OpenMP"
+        ]
+      },
+      {
+        "from": "../runtime-cpu",
+        "to": "runtime/cpu",
+        "filter": [
+          "llama-server.exe",
+          "llama-server-impl.dll",
+          "llama-common.dll",
+          "llama.dll",
+          "mtmd.dll",
+          "ggml.dll",
+          "ggml-base.dll",
+          "ggml-rpc.dll",
+          "ggml-cpu-*.dll",
+          "libomp.dll",
+          "LICENSE-LLVM-OpenMP"
+        ]
+      }
+    ],
+    "win": {
+      "target": ["nsis"],
+      "icon": "build/icon.ico",
+      "artifactName": "译澜-完整离线安装包-v${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": false,
+      "include": "build/installer.nsh",
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "译澜",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "uninstallDisplayName": "译澜 v1.6.0",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/uninstaller.ico",
+      "installerLanguages": ["zh_CN"],
+      "language": "2052"
+    }
+  }
+}

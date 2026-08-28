@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; font-src 'self'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>译澜</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <div class="mesh" aria-hidden="true"></div>
+    <div class="aurora aurora-one"></div>
+    <div class="aurora aurora-two"></div>
+    <div class="aurora aurora-three"></div>
+
+    <header class="titlebar">
+      <button class="brand-mark" id="settingsTrigger" type="button" aria-label="长按两秒打开设置" title="长按两秒打开设置">译</button>
+      <div class="brand-copy">
+        <strong>译澜</strong>
+        <span>YILAN · LOCAL TRANSLATION</span>
+      </div>
+      <div class="engine-pill" id="enginePill" data-state="idle">
+        <span class="pulse-dot"></span>
+        <span id="engineText">离线引擎按需启动</span>
+      </div>
+      <div class="window-controls" role="group" aria-label="窗口控制">
+        <button class="window-control minimize" id="windowMinimize" type="button" aria-label="最小化" title="最小化">
+          <span aria-hidden="true"></span>
+        </button>
+        <button class="window-control maximize" id="windowMaximize" type="button" aria-label="最大化" title="最大化">
+          <span aria-hidden="true"></span>
+        </button>
+        <button class="window-control close" id="windowClose" type="button" aria-label="关闭" title="关闭">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="toolbar glass-panel" id="toolbarPanel">
+        <span class="glass-spotlight" aria-hidden="true"></span>
+        <div class="direction-switch" role="group" aria-label="翻译方向">
+          <button class="direction active" data-mode="auto">自动检测</button>
+          <button class="direction" data-mode="zh-en">中文 → English</button>
+          <button class="direction" data-mode="en-zh">English → 中文</button>
+        </div>
+        <div class="toolbar-actions">
+          <button class="ghost-button" id="swapButton" title="交换原文与译文">
+            <span class="action-icon swap-action-icon" aria-hidden="true">⇄</span>
+            <span class="action-label">交换</span>
+          </button>
+          <button class="ghost-button" id="clearButton">
+            <span class="action-icon clear-action-icon" aria-hidden="true">⌫</span>
+            <span class="action-label">清空</span>
+          </button>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换亮色模式" title="切换明暗主题">
+            <span class="theme-icon" aria-hidden="true">
+              <span class="theme-core"></span>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <section class="translation-deck glass-panel" id="translationDeck">
+        <span class="glass-spotlight" aria-hidden="true"></span>
+        <span class="edge-light" aria-hidden="true"></span>
+        <div class="workspace">
+          <article class="editor-card source-card">
+            <div class="card-heading">
+              <div>
+                <span class="eyebrow">SOURCE</span>
+                <h2>原文</h2>
+              </div>
+              <span class="micro-hint">点按词语可查义</span>
+            </div>
+            <textarea
+              id="sourceText"
+              spellcheck="false"
+              maxlength="3000"
+              placeholder="输入中文或 English 句子…"
+              aria-label="原文"
+            ></textarea>
+            <div class="card-footer">
+              <span id="charCount">0 / 3000</span>
+              <span>Ctrl + Enter</span>
+            </div>
+          </article>
+
+          <div class="deck-divider" aria-hidden="true"></div>
+          <button class="translate-orb" id="translateButton" aria-label="开始翻译">
+            <span class="orb-halo" aria-hidden="true"></span>
+            <span class="orb-icon">→</span>
+            <span class="orb-label">翻译</span>
+          </button>
+
+          <article class="editor-card output-card">
+            <div class="card-heading">
+              <div>
+                <span class="eyebrow">TRANSLATION</span>
+                <h2>译文</h2>
+              </div>
+              <button class="icon-button" id="copyButton" title="复制译文">复制</button>
+            </div>
+            <div id="outputText" class="output-surface empty" aria-live="polite">
+              <div class="empty-state">
+                <div class="empty-glyph" aria-hidden="true"><span>A</span><i>译</i></div>
+                <p>译文将在这里呈现</p>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span id="translationMeta">全程离线，不上传文本</span>
+              <span id="renderMode">GPU UI</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="dictionary-panel glass-panel" id="dictionaryPanel">
+        <span class="glass-spotlight" aria-hidden="true"></span>
+        <div class="dictionary-accent"></div>
+        <div class="dictionary-heading">
+          <div>
+            <span class="eyebrow">WORD INSPECTOR</span>
+            <h2 id="wordTitle">逐词释义</h2>
+          </div>
+          <span class="language-badge" id="languageBadge">本地词典</span>
+        </div>
+        <div class="definition" id="definitionText">
+          点击原文或译文中的中文词语、英文单词，即可查看详细含义。
+        </div>
+      </section>
+
+      <footer class="footer-row">
+        <span>Tencent HY‑MT1.5 · llama.cpp CUDA · ECDICT · CC‑CEDICT</span>
+        <span class="designer-signature">Designed By MOFAN</span>
+        <button id="openLogButton">运行日志</button>
+      </footer>
+    </main>
+
+    <section class="settings-page experience-layer" id="settingsPage" aria-hidden="true">
+      <div class="experience-ambient" aria-hidden="true"></div>
+      <div class="settings-frame">
+        <header class="experience-header">
+          <div>
+            <span class="experience-kicker">YILAN PREFERENCES</span>
+            <h1>让译澜更像你</h1>
+            <p>所有偏好只保存在本机，随时生效。</p>
+          </div>
+          <button class="round-close" id="closeSettings" type="button" aria-label="关闭设置">×</button>
+        </header>
+
+        <div class="settings-grid">
+          <article class="settings-card tilt-setting-card">
+            <div class="setting-copy">
+              <span class="setting-index">01 · MOTION</span>
+              <h2>玻璃倾斜</h2>
+              <p>控制鼠标掠过板块时的最大透视角度。设为 0° 即完全关闭倾斜。</p>
+            </div>
+            <div class="tilt-demo" id="tiltDemo" aria-hidden="true">
+              <span>译</span>
+              <i></i>
+            </div>
+            <div class="range-row">
+              <span>0°</span>
+              <input id="tiltRange" type="range" min="0" max="4" step="0.1" value="1.2" aria-label="板块最大倾斜角度" />
+              <output id="tiltValue">1.2°</output>
+            </div>
+          </article>
+
+          <article class="settings-card color-setting-card">
+            <div class="setting-copy">
+              <span class="setting-index">02 · COLOR</span>
+              <h2>主题色</h2>
+              <p>选择一组贯穿光晕、按钮和玻璃高光的专属色彩。</p>
+            </div>
+            <div class="palette-grid" id="paletteGrid" role="radiogroup" aria-label="主题色"></div>
+          </article>
+        </div>
+
+        <div class="settings-footer">
+          <button class="text-action" id="replayOnboarding" type="button">重看新手教程</button>
+          <span>长按左上角「译」图标 2 秒，可随时回到这里</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="onboarding experience-layer" id="onboarding" aria-hidden="true">
+      <div class="experience-ambient" aria-hidden="true"></div>
+      <div class="onboarding-frame">
+        <button class="onboarding-skip" id="onboardingSkip" type="button">跳过</button>
+
+        <div class="poster-visual" id="posterVisual" data-page="0" aria-hidden="true">
+          <div class="poster-orbit orbit-one"></div>
+          <div class="poster-orbit orbit-two"></div>
+          <div class="poster-glyph">译</div>
+          <div class="poster-translation">
+            <span>Hello, offline world.</span>
+            <i>→</i>
+            <strong>你好，离线世界。</strong>
+          </div>
+          <div class="poster-words">
+            <span>language</span><span>语言</span><span>meaning</span><span>含义</span>
+          </div>
+          <div class="poster-shield">LOCAL<br />ONLY</div>
+        </div>
+
+        <div class="poster-copy" id="posterCopy">
+          <span class="experience-kicker" id="onboardingKicker">WELCOME TO YILAN</span>
+          <h1 id="onboardingTitle">译澜，安静地理解两种语言</h1>
+          <p id="onboardingDescription">无需网络，也无需账号。让中文与 English 在你的电脑里自然流动。</p>
+          <div class="poster-tags" id="onboardingTags"></div>
+        </div>
+
+        <footer class="onboarding-controls">
+          <div class="onboarding-dots" id="onboardingDots" aria-label="教程进度"></div>
+          <div class="onboarding-actions">
+            <button class="poster-back" id="onboardingBack" type="button">上一步</button>
+            <button class="poster-next" id="onboardingNext" type="button"><span>下一步</span><i>→</i></button>
+          </div>
+        </footer>
+      </div>
+    </section>
+
+    <div class="toast" id="toast" role="status"></div>
+    <script src="renderer.js"></script>
+  </body>
+</html>
