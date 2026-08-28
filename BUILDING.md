@@ -12,12 +12,12 @@
 
 为避免把大文件写入 Git 历史，并遵守第三方许可，仓库不包含以下资源：
 
-- `base-unpacked/resources/models/HY-MT1.5-1.8B-Q4_K_M.gguf`
+- `base-unpacked/resources/models/Hy-MT2-1.8B-Q6_K.gguf`
 - `base-unpacked/resources/data/dictionary.sqlite3`
 - `base-unpacked/resources/icons/*.ico`
 - `runtime-vulkan/` 与 `runtime-cpu/` 中的 llama.cpp 运行库
 
-请先阅读并接受 [Tencent HY Community License](app/third_party/TENCENT-HY-LICENSE.txt)，再从[官方模型页面](https://huggingface.co/tencent/HY-MT1.5-1.8B)获取模型并自行转换/量化。模型及其衍生版本不得在许可定义的 Territory 之外使用或分发。
+模型来自 [Tencent Hy-MT2-1.8B-GGUF](https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF)，按 Apache License 2.0 提供；构建与分发前请阅读 [Hy-MT2 许可](app/third_party/HY-MT2-LICENSE.txt)。
 
 llama.cpp 运行库应取自其官方 Windows Vulkan 与 CPU 发布包。运行库目录至少需包含 `llama-server.exe` 及 `app/package.json` 中 `extraResources` 所列 DLL 和许可证文件。
 

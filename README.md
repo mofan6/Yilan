@@ -13,7 +13,7 @@
 </div>
 
 > [!IMPORTANT]
-> 完整离线版内置 Tencent HY-MT1.5 模型。该模型许可明确排除欧盟、英国和韩国，且仅允许在许可定义的 Territory 内使用和分发。下载或使用完整安装包前，请先阅读 [Tencent HY Community License](app/third_party/TENCENT-HY-LICENSE.txt)。
+> 完整离线版内置 Tencent Hy-MT2-1.8B GGUF Q6_K 模型，按 Apache License 2.0 提供。下载或使用完整安装包前，请阅读 [Hy-MT2 许可](app/third_party/HY-MT2-LICENSE.txt)。
 
 ## 界面预览
 
@@ -35,14 +35,14 @@
 
 ## 安装与使用
 
-> 完整安装包包含受地域限制的 Tencent HY-MT1.5 模型，因此不在这个全球公开仓库提供下载。它保存在仓库所有者的私有 `Yilan-Offline-Release` 仓库中，仅可在模型许可定义的 Territory 内受控分发。
+> 完整安装包包含约 1.37 GiB 的 Tencent Hy-MT2-1.8B GGUF Q6_K 模型，因此作为 Release 资产提供，不直接写入源码仓库。
 
-1. 从有权访问的私有 Release 获取 `Yilan-v1.6.0-Full-Offline-Setup.exe`（显示标签：译澜 v1.6.0 完整离线安装包）。
+1. 在仓库右侧 **Releases** 下载 `Yilan-v1.6.0-Hy-MT2-Q6_K-Setup.exe`（显示标签：译澜 v1.6.0 · Hy-MT2 Q6_K 完整离线安装包）。
 2. 运行安装器，选择磁盘或父文件夹；译澜会自动创建 `Yilan` 子文件夹。
 3. 首次启动会展示一次新手教程，并在窗口出现后自动加载模型。
 4. 输入中文或英文句子，选择自动检测或固定方向后翻译；点击句子中的词可查看释义。
 
-完整包约 1.22 GiB，已包含模型、词典、Vulkan 与 CPU 推理运行库，新电脑安装后无需联网下载组件。
+完整包约 1.553 GiB，已包含模型、词典、Vulkan 与 CPU 推理运行库，新电脑安装后无需联网下载组件。
 
 ## 硬件兼容
 
@@ -66,7 +66,7 @@
 
 ## 第三方组件与许可
 
-- [Tencent HY-MT1.5](https://huggingface.co/tencent/HY-MT1.5-1.8B) — Tencent HY Community License
+- [Tencent Hy-MT2](https://huggingface.co/tencent/Hy-MT2-1.8B-GGUF) — Apache License 2.0
 - [llama.cpp](https://github.com/ggml-org/llama.cpp) — MIT License
 - [ECDICT](https://github.com/skywind3000/ECDICT) — MIT License
 - [CC-CEDICT](https://cc-cedict.org/) — CC BY-SA 4.0

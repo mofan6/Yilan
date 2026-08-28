@@ -10,7 +10,7 @@ app.setName('译澜');
 const DEV_ROOT = path.resolve(__dirname, '..', 'base-unpacked', 'resources');
 const BUNDLED_ROOT = process.resourcesPath;
 const INSTALL_ROOT = app.isPackaged && fs.existsSync(path.join(BUNDLED_ROOT, 'models')) ? BUNDLED_ROOT : DEV_ROOT;
-const MODEL_PATH = path.join(INSTALL_ROOT, 'models', 'HY-MT1.5-1.8B-Q4_K_M.gguf');
+const MODEL_PATH = path.join(INSTALL_ROOT, 'models', 'Hy-MT2-1.8B-Q6_K.gguf');
 const DATABASE_PATH = path.join(INSTALL_ROOT, 'data', 'dictionary.sqlite3');
 const LOG_PATH = path.join(app.getPath('userData'), 'logs', 'yilan-engine.log');
 const APP_LOG_PATH = path.join(app.getPath('userData'), 'logs', 'yilan-app.log');
@@ -530,7 +530,7 @@ ipcMain.handle('dictionary:word-at', (_event, payload) => wordAt(payload.text, p
 ipcMain.handle('dictionary:tokenize', (_event, text) => tokenizeText(text));
 ipcMain.handle('app:info', async () => ({
   installRoot: INSTALL_ROOT,
-  model: 'Tencent HY-MT1.5-1.8B Q4_K_M',
+  model: 'Tencent Hy-MT2-1.8B Q6_K',
   engineBackend: activeBackend?.id || 'on-demand',
   supportedBackends: BACKENDS.filter((backend) => fs.existsSync(path.join(backend.directory, 'llama-server.exe'))).map((backend) => backend.id),
   hardwareProfile: activeBackend?.id === 'cpu' ? { id: 'cpu', label: 'CPU' } : await detectHardwareProfile(),

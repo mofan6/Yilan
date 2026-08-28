@@ -5,19 +5,14 @@
 ----------
 译澜由 MOFAN 提供。Tencent（腾讯）与译澜不存在隶属、关联、赞助或认可关系。
 
-Tencent HY-MT1.5
-----------------
+Tencent Hy-MT2
+--------------
 Powered by Tencent HY.
 
-Tencent HY is licensed under the Tencent HY Community License Agreement,
-Copyright © 2025 Tencent. All Rights Reserved. The trademark rights of
-“Tencent HY” are owned by Tencent or its affiliate.
-
-本软件内置 Tencent HY-MT1.5-1.8B 的 GGUF 量化版本。其模型许可仅适用于
-Territory（不包括欧盟、英国和韩国的全球其他地区），并禁止在 Territory 之外
-使用、复制、修改、分发或展示 Tencent HY Works、输出或结果。完整许可及
-Acceptable Use Policy 请参阅同目录 TENCENT-HY-LICENSE.txt。安装和使用本软件
-即表示用户自行确认其所在地及使用方式符合该许可。
+本软件内置 Tencent Hy-MT2-1.8B 的 GGUF Q6_K 量化版本。
+Hy-MT2-1.8B Copyright © 2026 Tencent，并按 Apache License 2.0 提供。
+完整许可请参阅同目录 HY-MT2-LICENSE.txt。Tencent HY 相关商标归腾讯或其
+关联公司所有；Tencent 与译澜不存在隶属、赞助或认可关系。
 
 llama.cpp
 ---------
