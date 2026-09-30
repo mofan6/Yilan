@@ -117,13 +117,13 @@
             <Border HorizontalAlignment="Left" CornerRadius="14" Padding="12,7" Background="#16FFFFFF" BorderBrush="#36FFFFFF" BorderThickness="1">
               <StackPanel Orientation="Horizontal">
                 <Ellipse Width="7" Height="7" Fill="#55DFA4" Margin="0,0,8,0" />
-                <TextBlock Text="v1.6.0 · 完整离线版" Foreground="#B9CADB" FontSize="11" />
+                <TextBlock Text="v1.8.0 · 38 语言离线版" Foreground="#B9CADB" FontSize="11" />
               </StackPanel>
             </Border>
             <TextBlock Text="让语言，在本地&#x0a;自然流动。" FontSize="48" FontWeight="Bold" LineHeight="60" Margin="0,25,0,0">
               <TextBlock.Foreground><LinearGradientBrush StartPoint="0,0" EndPoint="1,1"><GradientStop Color="#FFFFFF" /><GradientStop Color="#B9D9FF" Offset="0.56" /><GradientStop Color="#96E9DA" Offset="1" /></LinearGradientBrush></TextBlock.Foreground>
             </TextBlock>
-            <TextBlock Text="无需联网，不上传文本。独显、集显与 CPU 均可使用，&#x0a;安装完成即可进行中英句子互译与逐词查义。"
+            <TextBlock Text="无需联网，不上传文本。独显、集显与 CPU 均可使用，&#x0a;安装完成即可进行 38 种语言互译与逐词查义。"
                        Foreground="#8FA4BA" FontSize="14" LineHeight="25" Margin="0,20,0,0" />
             <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
               <Border CornerRadius="18" Background="#12FFFFFF" BorderBrush="#2EFFFFFF" BorderThickness="1" Padding="14,10" Margin="0,0,10,0"><TextBlock Text="◈  全程离线" Foreground="#B7C9DB" /></Border>
@@ -170,7 +170,7 @@
                   <ProgressBar x:Name="InstallProgress" Height="8" Minimum="0" Maximum="100" Value="0" Margin="16,30,16,0" Foreground="#60E5D0" Background="#23000000" BorderThickness="0" />
                   <TextBlock x:Name="InstallLocationText" Foreground="#667C93" FontSize="10" TextAlignment="Center" TextTrimming="CharacterEllipsis" Margin="16,13,16,0" />
                 </StackPanel>
-                <Button x:Name="FinishButton" Grid.Row="1" Style="{StaticResource PrimaryButton}" Content="打开译澜  →" Height="56" Visibility="Collapsed" />
+                <Button x:Name="FinishButton" Grid.Row="1" Style="{StaticResource PrimaryButton}" Content="完成" Height="56" Visibility="Collapsed" />
               </Grid>
             </Grid>
           </Border>

@@ -4,13 +4,14 @@
     <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; font-src 'self'"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'self'"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>译澜</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <script src="boot-theme.js"></script>
     <div class="noise" aria-hidden="true"></div>
     <div class="mesh" aria-hidden="true"></div>
     <div class="aurora aurora-one"></div>
@@ -43,15 +44,39 @@
     <main class="app-shell">
       <section class="toolbar glass-panel" id="toolbarPanel">
         <span class="glass-spotlight" aria-hidden="true"></span>
-        <div class="direction-switch" role="group" aria-label="翻译方向">
-          <button class="direction active" data-mode="auto">自动检测</button>
-          <button class="direction" data-mode="zh-en">中文 → English</button>
-          <button class="direction" data-mode="en-zh">English → 中文</button>
+        <div class="language-route" role="group" aria-label="翻译语言">
+          <button class="language-selector" id="sourceLanguageButton" type="button" aria-haspopup="dialog" aria-expanded="false">
+            <span class="language-code automatic" id="sourceLanguageCode" aria-hidden="true">AUTO</span>
+            <span class="language-selector-copy">
+              <small>源语言</small>
+              <strong id="sourceLanguageLabel">自动检测</strong>
+            </span>
+            <span class="language-chevron" aria-hidden="true">⌄</span>
+          </button>
+          <button class="language-swap" id="swapButton" type="button" aria-label="交换源语言与目标语言" title="交换源语言与目标语言" disabled>
+            <span aria-hidden="true">⇄</span>
+          </button>
+          <button class="language-selector" id="targetLanguageButton" type="button" aria-haspopup="dialog" aria-expanded="false">
+            <span class="language-code flag-mark" id="targetLanguageCode" aria-hidden="true"><img src="assets/flags/gb.svg" alt="" draggable="false" /></span>
+            <span class="language-selector-copy">
+              <small>目标语言</small>
+              <strong id="targetLanguageLabel">English</strong>
+            </span>
+            <span class="language-chevron" aria-hidden="true">⌄</span>
+          </button>
         </div>
         <div class="toolbar-actions">
-          <button class="ghost-button" id="swapButton" title="交换原文与译文">
-            <span class="action-icon swap-action-icon" aria-hidden="true">⇄</span>
-            <span class="action-label">交换</span>
+          <button class="ghost-button tool-button" id="captureButton" type="button" title="截图翻译 · Alt+Q">
+            <span class="action-icon capture-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M8 4H5a1 1 0 0 0-1 1v3M16 4h3a1 1 0 0 1 1 1v3M8 20H5a1 1 0 0 1-1-1v-3M16 20h3a1 1 0 0 0 1-1v-3M8 12h8" /></svg>
+            </span>
+            <span class="action-label">截图</span>
+          </button>
+          <button class="ghost-button tool-button" id="documentButton" type="button" title="文档翻译">
+            <span class="action-icon document-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v5h4M10 12h5M10 16h5" /></svg>
+            </span>
+            <span class="action-label">文档</span>
           </button>
           <button class="ghost-button" id="clearButton">
             <span class="action-icon clear-action-icon" aria-hidden="true">⌫</span>
@@ -75,13 +100,14 @@
                 <span class="eyebrow">SOURCE</span>
                 <h2>原文</h2>
               </div>
-              <span class="micro-hint">点按词语可查义</span>
+              <button class="icon-button source-image-button" id="sourceImageButton" type="button" title="添加图片并进行 OCR 翻译"><span aria-hidden="true">＋</span>图片</button>
+              <input id="sourceImageInput" type="file" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif" hidden />
             </div>
             <textarea
               id="sourceText"
               spellcheck="false"
               maxlength="3000"
-              placeholder="输入中文或 English 句子…"
+              placeholder="输入任意语言文字，或粘贴 / 添加图片进行识别…"
               aria-label="原文"
             ></textarea>
             <div class="card-footer">
@@ -135,11 +161,284 @@
       </section>
 
       <footer class="footer-row">
-        <span>Tencent Hy‑MT2 · llama.cpp Vulkan/CPU · ECDICT · CC‑CEDICT</span>
+        <span>Tencent Hy‑MT2 · 38 Languages · llama.cpp Vulkan/CPU</span>
         <span class="designer-signature">Designed By MOFAN</span>
         <button id="openLogButton">运行日志</button>
       </footer>
     </main>
+
+    <section class="language-picker-layer" id="languagePicker" aria-hidden="true">
+      <div class="language-picker-backdrop" id="languagePickerBackdrop" aria-hidden="true"></div>
+      <div class="language-picker-panel" role="dialog" aria-modal="true" aria-labelledby="languagePickerTitle">
+        <header class="language-picker-header">
+          <div>
+            <span class="language-picker-kicker">YILAN · 38 LANGUAGES</span>
+            <h2 id="languagePickerTitle">选择语言</h2>
+          </div>
+          <button class="language-picker-close" id="languagePickerClose" type="button" aria-label="关闭语言选择">×</button>
+        </header>
+        <label class="language-search">
+          <span aria-hidden="true"></span>
+          <input id="languageSearchInput" type="search" autocomplete="off" spellcheck="false" placeholder="搜索中文名、English name 或语言代码…" />
+          <kbd>ESC</kbd>
+        </label>
+        <div class="language-picker-content" id="languagePickerContent"></div>
+        <footer class="language-picker-footer">
+          <span>点击星标收藏，右键语言也可快速收藏</span>
+          <span>Hy‑MT2 · 全程离线</span>
+        </footer>
+      </div>
+    </section>
+
+    <section class="capture-progress-float" id="captureProgress" role="status" aria-live="polite" aria-hidden="true">
+      <span class="capture-progress-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 4H5.8A1.8 1.8 0 0 0 4 5.8V8M16 4h2.2A1.8 1.8 0 0 1 20 5.8V8M20 16v2.2a1.8 1.8 0 0 1-1.8 1.8H16M8 20H5.8A1.8 1.8 0 0 1 4 18.2V16" />
+          <path d="M8 12h8M12 8v8" />
+        </svg>
+      </span>
+      <div class="capture-progress-copy">
+        <header>
+          <strong id="captureProgressTitle">正在处理截图</strong>
+          <b id="captureProgressPercent">0%</b>
+        </header>
+        <p id="captureProgressDetail">正在准备本地识别引擎…</p>
+        <span class="capture-progress-track" aria-hidden="true"><i id="captureProgressFill"></i></span>
+      </div>
+    </section>
+
+    <section class="capture-result-layer" id="captureResultLayer" aria-hidden="true">
+      <div class="capture-result-backdrop" id="captureResultBackdrop"></div>
+      <article class="capture-result-card" role="dialog" aria-modal="true" aria-labelledby="captureResultTitle">
+        <span class="capture-result-glow" aria-hidden="true"></span>
+        <header class="capture-result-header">
+          <div>
+            <span class="experience-kicker">YILAN · SCREEN TRANSLATION</span>
+            <h2 id="captureResultTitle">截图翻译</h2>
+            <p id="captureResultMeta">正在识别选区文字…</p>
+          </div>
+          <button class="round-close" id="captureResultClose" type="button" aria-label="关闭截图翻译">×</button>
+        </header>
+        <div class="capture-result-body">
+          <figure class="capture-preview">
+            <div class="capture-preview-stage" id="capturePreviewStage">
+              <img id="capturePreviewImage" alt="截图选区预览" />
+              <div class="capture-block-layer" id="captureBlockLayer" aria-label="拖动选择需要翻译的图片文字"></div>
+              <span class="capture-drag-selection" id="captureDragSelection" aria-hidden="true"></span>
+            </div>
+            <figcaption>在图片文字上横向拖动，可只翻译选中片段</figcaption>
+          </figure>
+          <div class="capture-copy-grid">
+            <section>
+              <header><span>OCR SOURCE</span><button id="copyCaptureSource" type="button">复制原文</button></header>
+              <div class="capture-text" id="captureSourceText"></div>
+            </section>
+            <section class="translated">
+              <header><span>TRANSLATION</span><button id="copyCaptureTranslation" type="button">复制译文</button></header>
+              <div class="capture-text" id="captureTranslatedText"></div>
+            </section>
+          </div>
+        </div>
+        <footer class="capture-result-actions">
+          <button class="yilan-action-button" id="captureAgain" type="button">
+            <span class="yilan-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 4H5a1 1 0 0 0-1 1v3M16 4h3a1 1 0 0 1 1 1v3M8 20H5a1 1 0 0 1-1-1v-3M16 20h3a1 1 0 0 0 1-1v-3M8 12h8" /></svg></span>
+            <span class="yilan-action-label">重新框选</span>
+          </button>
+          <button class="yilan-action-button" id="captureInsert" type="button">
+            <span class="yilan-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12h11M10 7l5 5-5 5M19 5v14" /></svg></span>
+            <span class="yilan-action-label">回填主界面</span>
+          </button>
+          <button class="yilan-action-button action-emphasis" id="captureCopyAndClose" type="button">
+            <span class="yilan-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg></span>
+            <span class="yilan-action-label">复制译文</span><i class="yilan-action-trailing" aria-hidden="true">→</i>
+          </button>
+        </footer>
+      </article>
+    </section>
+
+    <section class="document-page experience-layer" id="documentPage" aria-hidden="true">
+      <div class="experience-ambient" aria-hidden="true"></div>
+      <canvas class="document-particle-layer" id="documentParticleLayer" aria-hidden="true"></canvas>
+      <div class="window-controls document-window-controls" role="group" aria-label="文档窗口控制">
+        <button class="window-control minimize" id="documentWindowMinimize" type="button" aria-label="最小化" title="最小化"><span aria-hidden="true"></span></button>
+        <button class="window-control maximize" id="documentWindowMaximize" type="button" aria-label="最大化" title="最大化"><span aria-hidden="true"></span></button>
+        <button class="window-control close" id="closeDocumentPage" type="button" aria-label="关闭文档翻译" title="关闭文档翻译"><span aria-hidden="true"></span></button>
+      </div>
+      <div class="document-frame">
+        <header class="experience-header document-header">
+          <div class="document-header-copy" id="documentHeaderCopy">
+            <span class="experience-kicker">YILAN DOCUMENT STUDIO</span>
+            <h1>让整份文档，在本地自然流动</h1>
+            <p>导入文档，译澜会拆分结构、逐段翻译并生成新文件，原件始终保持不变。</p>
+          </div>
+        </header>
+
+        <div class="document-layout">
+          <button class="document-vortex-toggle" id="documentSetupRailButton" type="button" aria-expanded="true" aria-label="收起文档设置" title="收起文档设置">
+            <span class="document-vortex-core" aria-hidden="true"><i></i><b></b></span>
+          </button>
+          <div class="document-vortex-streams" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="document-vortex-guide" id="documentVortexGuide" role="status" aria-live="polite" aria-hidden="true" hidden>
+            <div class="document-guide-mascot" aria-hidden="true">
+              <svg viewBox="0 0 64 72" focusable="false">
+                <defs>
+                  <linearGradient id="documentGuideHood" x1="8" y1="4" x2="55" y2="66" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="var(--accent-a)" />
+                    <stop offset="1" stop-color="var(--accent-b)" />
+                  </linearGradient>
+                </defs>
+                <ellipse cx="32" cy="67" rx="19" ry="3" fill="rgba(4,8,18,.22)" />
+                <path d="M14 27C14 13 21 5 32 5s18 8 18 22v10H14V27Z" fill="url(#documentGuideHood)" />
+                <circle cx="32" cy="27" r="13.5" fill="#ffe7d2" />
+                <path d="M20 25c2-10 7-14 14-14 7 0 11 4 12 12-5-4-9-5-13-5-3 4-8 6-13 7Z" fill="#f7fbff" />
+                <path d="M20 23c2-7 7-12 14-12 5 0 9 2 12 7-5-2-9-3-13-2-3 3-7 5-13 7Z" fill="rgba(113,159,255,.24)" />
+                <circle cx="27" cy="28" r="1.7" fill="#27354d" />
+                <circle cx="38" cy="28" r="1.7" fill="#27354d" />
+                <path d="M29 34c2 1.7 4.4 1.7 6.5 0" fill="none" stroke="#d27778" stroke-width="1.6" stroke-linecap="round" />
+                <path d="M21 40c3-4 7-6 11-6 5 0 9 2 12 6l5 22H15l6-22Z" fill="url(#documentGuideHood)" />
+                <path d="M25 61v6M40 61v6" stroke="#51627d" stroke-width="5" stroke-linecap="round" />
+                <rect x="25" y="43" width="14" height="14" rx="5" fill="rgba(255,255,255,.88)" stroke="rgba(255,255,255,.7)" />
+                <text x="32" y="53.5" text-anchor="middle" font-size="8" font-weight="800" fill="#5269d9">译</text>
+                <path d="M18 43 11 54" stroke="url(#documentGuideHood)" stroke-width="6" stroke-linecap="round" />
+                <g class="document-guide-wave-arm">
+                  <path d="M45 42c5-4 8-8 8-13" fill="none" stroke="url(#documentGuideHood)" stroke-width="6" stroke-linecap="round" />
+                  <circle cx="53" cy="28" r="3.4" fill="#ffe7d2" />
+                </g>
+                <g class="document-guide-spark">
+                  <path d="m55 10 1.5 3.2L60 15l-3.5 1.5L55 20l-1.6-3.5L50 15l3.4-1.8L55 10Z" fill="var(--accent-a)" />
+                  <circle cx="8" cy="23" r="2" fill="var(--accent-b)" />
+                </g>
+              </svg>
+            </div>
+            <div class="document-vortex-guide-copy">
+              <strong>点点这个黑洞～</strong>
+              <span>它会把设置栏轻轻收起来</span>
+            </div>
+          </div>
+          <aside class="document-setup-card">
+            <div class="document-setup-content" id="documentSetupContent">
+              <div class="document-card-heading">
+              <span class="setting-index">01 · DOCUMENT</span>
+              <h2>选择文档</h2>
+              <p>支持 TXT、Markdown、DOCX、PPTX、XLSX 与数字/扫描 PDF。</p>
+              </div>
+              <button class="document-drop-zone" id="documentDropZone" type="button">
+              <span class="drop-glyph" aria-hidden="true"><i></i></span>
+              <strong id="documentDropTitle">拖入文档，或点击选择</strong>
+              <small id="documentDropDetail">原文件不会被覆盖 · 全程离线</small>
+              </button>
+              <div class="document-file-chip" id="documentFileChip" aria-hidden="true">
+              <span class="file-type" id="documentFileType">DOC</span>
+              <span><strong id="documentFileName"></strong><small id="documentFileMeta"></small></span>
+              <button id="clearDocumentFile" type="button" aria-label="移除文档">×</button>
+              </div>
+              <label class="pdf-scan-option" id="pdfScanOption" aria-hidden="true">
+              <input id="pdfScanCheckbox" type="checkbox" />
+              <span class="pdf-scan-check" aria-hidden="true"><i>✓</i></span>
+              <span><strong>这是扫描型 PDF</strong><small>逐页渲染并进行本地 OCR，再生成双语译文</small></span>
+              <b>SCAN OCR</b>
+              </label>
+
+              <div class="document-card-heading language-heading">
+              <span class="setting-index">02 · LANGUAGE</span>
+              <h2>翻译方向</h2>
+              </div>
+              <div class="document-language-route">
+              <button class="document-language-button" id="documentSourceButton" type="button">
+                <span class="language-code automatic" id="documentSourceCode">AUTO</span>
+                <span><small>源语言</small><strong id="documentSourceLabel">自动检测</strong></span>
+                <i>⌄</i>
+              </button>
+              <span class="document-route-arrow">→</span>
+              <button class="document-language-button" id="documentTargetButton" type="button">
+                <span class="language-code flag-mark" id="documentTargetCode"><img src="assets/flags/gb.svg" alt="" /></span>
+                <span><small>目标语言</small><strong id="documentTargetLabel">English</strong></span>
+                <i>⌄</i>
+              </button>
+              </div>
+              <button class="document-start-button yilan-action-button action-emphasis" id="startDocumentTranslation" type="button" disabled>
+                <span class="yilan-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v5h4M10 12h5M10 16h5" /></svg></span>
+                <span class="yilan-action-label">开始文档翻译</span><i class="yilan-action-trailing" aria-hidden="true">→</i>
+              </button>
+            </div>
+          </aside>
+
+          <main class="document-progress-card">
+            <div class="document-orbit" aria-hidden="true"><span></span><i></i><b></b></div>
+            <div class="document-empty-state" id="documentEmptyState">
+              <span class="document-empty-kicker">READY WHEN YOU ARE</span>
+              <h2>文档会在这里逐段展开</h2>
+              <p>选择文档后即可开始。句子翻译和截图翻译会自动获得更高优先级，不必等待整份文档完成。</p>
+              <div class="document-feature-pills"><span>原件保护</span><span>可暂停</span><span>结构写回</span><span>扫描页 OCR</span></div>
+            </div>
+            <div class="document-reader-view" id="documentReaderView" aria-hidden="true">
+              <header class="document-reader-header">
+                <div><small id="documentReaderFormat">LOCAL READER</small><h2 id="documentReaderTitle">正在打开文档</h2></div>
+                <div class="document-reader-state"><span></span><strong id="documentReaderStatus">识别格式中</strong><b id="documentReaderPercent">READY</b></div>
+              </header>
+              <div class="document-reader-progress"><span id="documentReaderProgressBar"></span></div>
+              <div class="document-reader-grid">
+                <div class="document-viewer-pane">
+                  <div class="document-viewer-scroll" id="documentViewerScroll">
+                    <div class="document-viewer-stage" id="documentViewerStage">
+                      <div class="document-viewer" id="documentViewer"><div class="document-viewer-loading">正在启动本地阅读器…</div></div>
+                    </div>
+                  </div>
+                  <div class="document-zoom-controls" id="documentZoomControls" role="group" aria-label="文档缩放">
+                    <button id="documentZoomOut" type="button" aria-label="缩小文档" title="缩小文档">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.2 15.2 21 21M7.5 10.5h6"></path></svg>
+                    </button>
+                    <span id="documentZoomValue" aria-live="polite">100%</span>
+                    <button id="documentZoomIn" type="button" aria-label="放大文档" title="放大文档">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.2 15.2 21 21M7.5 10.5h6M10.5 7.5v6"></path></svg>
+                    </button>
+                  </div>
+                </div>
+                <aside class="document-selection-panel">
+                  <header><span>SELECTION TRANSLATION</span><button id="copyDocumentSelection" type="button">复制</button></header>
+                  <div class="document-selection-hint" id="documentSelectionHint">在左侧阅读器里拖选任意文字，译文会在这里出现。</div>
+                  <section><small>SELECTED SOURCE</small><p id="documentSelectionSource"></p></section>
+                  <section class="translated"><small>TRANSLATION</small><p id="documentSelectionTranslation"></p></section>
+                </aside>
+              </div>
+              <footer class="document-reader-footer">
+                <span id="documentReaderMeta">文档只在本机解析</span>
+                <div>
+                  <button id="pauseDocumentReaderTask" type="button" hidden>暂停</button>
+                  <button id="cancelDocumentReaderTask" type="button" hidden>取消任务</button>
+                  <button id="showDocumentReaderOutput" type="button" hidden>打开所在位置</button>
+                  <button class="yilan-action-button action-emphasis" id="openDocumentReaderOutput" type="button" disabled>
+                    <span class="yilan-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3zM13 14h6M16 11l3 3-3 3" /></svg></span>
+                    <span class="yilan-action-label">打开译文</span>
+                  </button>
+                </div>
+              </footer>
+            </div>
+            <div class="document-task-view" id="documentTaskView" aria-hidden="true">
+              <header class="document-task-header">
+                <div><span class="task-state-dot"></span><small id="documentTaskKicker">LOCAL DOCUMENT TASK</small><h2 id="documentTaskTitle">正在准备文档</h2></div>
+                <strong id="documentProgressPercent">0%</strong>
+              </header>
+              <div class="document-progress-track"><span id="documentProgressBar"></span></div>
+              <div class="document-progress-meta"><span id="documentProgressCount">正在分析结构</span><span id="documentElapsed">0 秒</span></div>
+              <div class="document-preview-list" id="documentPreviewList"></div>
+              <div class="document-output-card" id="documentOutputCard" aria-hidden="true">
+                <span class="output-check">✓</span>
+                <div><strong>译文文件已生成</strong><small id="documentOutputPath"></small></div>
+              </div>
+              <div class="document-error-card" id="documentErrorCard" aria-hidden="true"><strong>任务没有完成</strong><span id="documentErrorText"></span></div>
+              <footer class="document-task-actions">
+                <button id="pauseDocumentTask" type="button">暂停</button>
+                <button id="cancelDocumentTask" type="button">取消任务</button>
+                <button id="showDocumentOutput" type="button" hidden>打开所在位置</button>
+                <button class="primary-action" id="openDocumentOutput" type="button" hidden><span>打开译文</span><i>→</i></button>
+              </footer>
+            </div>
+          </main>
+        </div>
+        <footer class="document-footer"><span>支持当前会话暂停与继续</span><span>PDF 保留原页面、图表与基础排版并写入译文</span></footer>
+      </div>
+    </section>
 
     <section class="settings-page experience-layer" id="settingsPage" aria-hidden="true">
       <div class="experience-ambient" aria-hidden="true"></div>
@@ -179,6 +478,32 @@
             </div>
             <div class="palette-grid" id="paletteGrid" role="radiogroup" aria-label="主题色"></div>
           </article>
+
+          <article class="settings-card ocr-setting-card">
+            <div class="setting-copy">
+              <span class="setting-index">03 · SCREEN OCR</span>
+              <h2>截图识别策略</h2>
+              <p>智能路由只唤醒需要的文字模型；明确选择源语言时会自动进入最快链路。</p>
+            </div>
+            <div class="ocr-mode-grid" id="ocrModeGrid" role="radiogroup" aria-label="截图识别策略">
+              <button class="ocr-mode-option" type="button" role="radio" data-ocr-mode="smart" aria-checked="true">
+                <span class="ocr-mode-icon" aria-hidden="true">◎</span>
+                <span><strong>智能路由</strong><small>自动判断文字体系，速度与覆盖兼顾</small></span>
+                <i aria-hidden="true"></i>
+              </button>
+              <button class="ocr-mode-option" type="button" role="radio" data-ocr-mode="compatible" aria-checked="false">
+                <span class="ocr-mode-icon" aria-hidden="true">◌</span>
+                <span><strong>兼容融合</strong><small>识别困难截图时追加多模型校正</small></span>
+                <i aria-hidden="true"></i>
+              </button>
+              <button class="ocr-mode-option" type="button" role="radio" data-ocr-mode="specified" aria-checked="false">
+                <span class="ocr-mode-icon" aria-hidden="true">→</span>
+                <span><strong>仅指定语言</strong><small>必须先选源语言，跳过检测且速度最快</small></span>
+                <i aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="ocr-coverage-note"><span></span>已补齐 38 种语言的离线 OCR 路由</div>
+          </article>
         </div>
 
         <div class="settings-footer">
@@ -210,8 +535,8 @@
 
         <div class="poster-copy" id="posterCopy">
           <span class="experience-kicker" id="onboardingKicker">WELCOME TO YILAN</span>
-          <h1 id="onboardingTitle">译澜，安静地理解两种语言</h1>
-          <p id="onboardingDescription">无需网络，也无需账号。让中文与 English 在你的电脑里自然流动。</p>
+          <h1 id="onboardingTitle">译澜，让 38 种语言在本地流动</h1>
+          <p id="onboardingDescription">无需网络，也无需账号。选择源语言与目标语言，即刻开始离线翻译。</p>
           <div class="poster-tags" id="onboardingTags"></div>
         </div>
 

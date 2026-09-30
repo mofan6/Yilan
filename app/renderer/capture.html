@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>译澜截图翻译</title>
+    <link rel="stylesheet" href="capture.css" />
+  </head>
+  <body>
+    <img id="screenImage" alt="" draggable="false" />
+    <div class="wash" aria-hidden="true"></div>
+    <div class="selection" id="selection" aria-hidden="true"><span class="size" id="selectionSize"></span></div>
+    <div class="crosshair crosshair-x" id="crosshairX"></div>
+    <div class="crosshair crosshair-y" id="crosshairY"></div>
+    <div class="guide"><strong>拖拽选择需要识别的区域</strong><span>Enter 识别翻译 · Esc 取消 · 右键重选</span></div>
+    <div class="capture-actions" id="captureActions" aria-hidden="true">
+      <button id="retryButton" type="button">重新框选</button>
+      <button class="primary" id="confirmButton" type="button"><span>识别并翻译</span><i>→</i></button>
+    </div>
+    <script src="capture.js"></script>
+  </body>
+</html>

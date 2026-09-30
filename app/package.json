@@ -1,7 +1,7 @@
 {
   "name": "yilan-offline-translator",
-  "version": "1.6.0",
-  "description": "译澜：支持逐词查义、兼容独显、集显和 CPU 的离线中英句子翻译器",
+  "version": "1.8.0",
+  "description": "译澜：支持 38 种语言互译、逐词查义及独显、集显和 CPU 自适应推理的离线翻译器",
   "main": "main.js",
   "author": "MOFAN",
   "license": "UNLICENSED",
@@ -18,6 +18,10 @@
     "productName": "译澜",
     "executableName": "Yilan",
     "asar": true,
+    "asarUnpack": [
+      "node_modules/tesseract.js/**/*",
+      "node_modules/tesseract.js-core/**/*"
+    ],
     "compression": "maximum",
     "directories": {
       "output": "dist",
@@ -26,30 +30,70 @@
     "files": [
       "main.js",
       "preload.js",
+      "startup-preload.js",
+      "capture-preload.js",
+      "services/**/*",
       "renderer/**/*",
-      "package.json"
+      "package.json",
+      "!node_modules/**/*.map",
+      "!node_modules/**/*.md",
+      "!node_modules/**/*.ts",
+      "!node_modules/**/.github/**/*",
+      "!node_modules/**/{test,tests,__tests__,coverage,docs,doc,example,examples}/**/*",
+      "!node_modules/**/tsconfig*.json",
+      "!node_modules/echarts/**/*",
+      "!node_modules/zrender/**/*",
+      "!node_modules/pptx-preview/node_modules/**/*"
     ],
-    "electronLanguages": ["zh-CN", "en-US"],
+    "electronLanguages": [
+      "zh-CN",
+      "en-US"
+    ],
     "extraResources": [
       {
         "from": "../base-unpacked/resources/models",
         "to": "models",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "../base-unpacked/resources/data",
         "to": "data",
-        "filter": ["dictionary.sqlite3"]
+        "filter": [
+          "dictionary.sqlite3"
+        ]
       },
       {
         "from": "../base-unpacked/resources/icons",
         "to": "icons",
-        "filter": ["*.ico"]
+        "filter": [
+          "*.ico"
+        ]
+      },
+      {
+        "from": "../base-unpacked/resources/ocr",
+        "to": "ocr",
+        "filter": [
+          "**/*",
+          "!**/models/*PP-OCRv5*",
+          "!**/models/ppocrv5_*",
+          "!tessdata/ben.traineddata",
+          "!tessdata/bod.traineddata",
+          "!tessdata/heb.traineddata",
+          "!tessdata/*_best.traineddata",
+          "!tessdata/Gujarati.traineddata",
+          "!tessdata/Hangul.traineddata",
+          "!tessdata/Khmer.traineddata",
+          "!tessdata/Myanmar.traineddata"
+        ]
       },
       {
         "from": "third_party",
         "to": "licenses",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "../runtime-vulkan",
@@ -88,7 +132,9 @@
       }
     ],
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
       "icon": "build/icon.ico",
       "artifactName": "译澜-完整离线安装包-v${version}.${ext}"
     },
@@ -101,13 +147,35 @@
       "createDesktopShortcut": "always",
       "createStartMenuShortcut": true,
       "shortcutName": "译澜",
-      "runAfterFinish": true,
+      "runAfterFinish": false,
       "deleteAppDataOnUninstall": false,
-      "uninstallDisplayName": "译澜 v1.6.0",
+      "uninstallDisplayName": "译澜 v1.8.0",
       "installerIcon": "build/icon.ico",
       "uninstallerIcon": "build/uninstaller.ico",
-      "installerLanguages": ["zh_CN"],
+      "installerLanguages": [
+        "zh_CN"
+      ],
       "language": "2052"
+    }
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.9",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "docx-preview": "^0.4.0",
+    "echarts": "^6.1.0",
+    "franc-min": "^6.2.0",
+    "jszip": "^3.10.2",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.3.289",
+    "pptx-preview": "^1.0.7",
+    "tesseract.js": "^7.0.0",
+    "uuid": "^11.1.1",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "overrides": {
+    "pptx-preview": {
+      "echarts": "6.1.0",
+      "uuid": "11.1.1"
     }
   }
 }

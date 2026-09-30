@@ -20,7 +20,7 @@ async function main() {
   const stubSize = fs.statSync(stub).size;
   const payloadSize = fs.statSync(payload).size;
   const footer = Buffer.alloc(32);
-  footer.write('YILANPAYLOAD160!', 0, 'ascii');
+  footer.write('YILANPAYLOAD180!', 0, 'ascii');
   footer.writeBigInt64LE(BigInt(stubSize), 16);
   footer.writeBigInt64LE(BigInt(payloadSize), 24);
   const outputDirectory = path.dirname(output);

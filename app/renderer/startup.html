@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; font-src 'self'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>译澜正在启动</title>
+    <link rel="stylesheet" href="startup.css" />
+    <script src="startup.js" defer></script>
+  </head>
+  <body>
+    <div class="startup-ambient startup-ambient-one" aria-hidden="true"></div>
+    <div class="startup-ambient startup-ambient-two" aria-hidden="true"></div>
+    <main class="startup-card" role="status" aria-live="polite">
+      <div class="startup-brand-row">
+        <div class="startup-logo" aria-hidden="true">
+          <span>译</span>
+          <i></i><i></i><i></i>
+        </div>
+        <div class="startup-copy">
+          <span>YILAN · LOCAL INTELLIGENCE</span>
+          <h1>译澜正在启动</h1>
+          <p id="startupDetail">正在恢复主题与本地工作区…</p>
+        </div>
+      </div>
+      <div class="startup-progress-head">
+        <span>本地翻译工作台</span>
+        <strong id="startupPercent">12%</strong>
+      </div>
+      <div class="startup-progress-track" aria-hidden="true">
+        <i class="startup-progress-fill"></i>
+        <b></b>
+      </div>
+      <div class="startup-foot">
+        <span><i></i>完全离线</span>
+        <small>文本、图片与文档均留在本机</small>
+      </div>
+    </main>
+  </body>
+</html>

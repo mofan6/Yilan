@@ -14,11 +14,11 @@ using System.Windows.Media.Animation;
 using Forms = System.Windows.Forms;
 
 [assembly: AssemblyTitle("译澜安装器")]
-[assembly: AssemblyDescription("译澜 v1.6.0 现代离线安装器")]
+[assembly: AssemblyDescription("译澜 v1.8.0 现代离线安装器")]
 [assembly: AssemblyCompany("MOFAN")]
 [assembly: AssemblyProduct("译澜")]
-[assembly: AssemblyVersion("1.6.0.0")]
-[assembly: AssemblyFileVersion("1.6.0.0")]
+[assembly: AssemblyVersion("1.8.0.0")]
+[assembly: AssemblyFileVersion("1.8.0.0")]
 
 namespace YilanModernInstaller
 {
@@ -52,7 +52,7 @@ namespace YilanModernInstaller
     internal sealed class InstallerController
     {
         private const int FooterSize = 32;
-        private const string FooterMagic = "YILANPAYLOAD160!";
+        private const string FooterMagic = "YILANPAYLOAD180!";
         private bool installing;
         private string installedExecutable;
 
@@ -136,7 +136,6 @@ namespace YilanModernInstaller
             InstallButton.Click += InstallClicked;
             FinishButton.Click += delegate
             {
-                if (File.Exists(installedExecutable)) Process.Start(new ProcessStartInfo(installedExecutable) { UseShellExecute = true });
                 Window.Close();
             };
         }

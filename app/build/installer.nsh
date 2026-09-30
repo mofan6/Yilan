@@ -73,8 +73,8 @@ FunctionEnd
   SetShellVarContext all
   Delete "$DESKTOP\译澜.lnk"
   SetShellVarContext current
-  CreateShortCut "$DESKTOP\译澜.lnk" "$INSTDIR\Yilan.exe" "" "$INSTDIR\resources\icons\aurora.ico" 0 SW_SHOWNORMAL "" "译澜 · 离线中英翻译"
-  CreateShortCut "$SMPROGRAMS\译澜.lnk" "$INSTDIR\Yilan.exe" "" "$INSTDIR\resources\icons\aurora.ico" 0 SW_SHOWNORMAL "" "译澜 · 离线中英翻译"
+  CreateShortCut "$DESKTOP\译澜.lnk" "$INSTDIR\Yilan.exe" "" "$INSTDIR\resources\icons\orange.ico" 0 SW_SHOWNORMAL "" "译澜 · 38 语言离线翻译"
+  CreateShortCut "$SMPROGRAMS\译澜.lnk" "$INSTDIR\Yilan.exe" "" "$INSTDIR\resources\icons\orange.ico" 0 SW_SHOWNORMAL "" "译澜 · 38 语言离线翻译"
   ${If} $installMode == "all"
     SetShellVarContext all
   ${EndIf}
